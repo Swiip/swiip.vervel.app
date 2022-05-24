@@ -1,9 +1,19 @@
-import type { NextPage } from 'next'
+import type { NextPage, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { Client } from '@notionhq/client'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+const NOTION_KEY = 'secret_gZNAR6WBAbPPHeFGemwS3rjgnMMvAZLG9GGLTFfaMhA'
+const NOTION_ROOT_ID = '302e5568d84c4ef6a67812b2d31efcdd'
+
+const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  page,
+  blocks,
+}) => {
+  console.log('pageProps', page, blocks)
+  //.paragraph.rich_text[0].plain_text
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,9 +23,23 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className="text-9xl font-bold underline">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        <h1 className="text-5xl font-bold underline">
+          {page.icon.emoji}{' '}
+          {
+            blocks.find((block) => block.type === 'heading_1').heading_1
+              .rich_text[0].plain_text
+          }
         </h1>
+
+        {blocks
+          .filter((block) => block.type === 'paragraph')
+          .map((paragraph) => {
+            return (
+              <p key={paragraph.id}>
+                {paragraph.paragraph.rich_text[0].plain_text}
+              </p>
+            )
+          })}
 
         <p className={styles.description}>
           Get started by editing{' '}
@@ -67,6 +91,31 @@ const Home: NextPage = () => {
       </footer>
     </div>
   )
+}
+
+// This function gets called at build time on server-side.
+// It may be called again, on a serverless function, if
+// revalidation is enabled and a new request comes in
+export async function getStaticProps() {
+  const notion = new Client({ auth: NOTION_KEY })
+  const page = await notion.pages.retrieve({
+    page_id: NOTION_ROOT_ID,
+  })
+  const allBlocks = await notion.blocks.children.list({
+    block_id: NOTION_ROOT_ID,
+    page_size: 50,
+  })
+  const blocks = allBlocks.results.filter(
+    (block) => (block as any).type !== 'child_page'
+  )
+
+  return {
+    props: { page, blocks },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 10 seconds
+    revalidate: 10, // In seconds
+  }
 }
 
 export default Home
