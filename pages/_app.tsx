@@ -5,11 +5,11 @@ import { ThemeProvider } from 'next-themes'
 import { FC } from 'react'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  return (
-    <ThemeProvider attribute="class">
-      <Component {...pageProps} />
-    </ThemeProvider>
-  )
+	return (
+		<ThemeProvider attribute="class">
+			<Component {...pageProps} />
+		</ThemeProvider>
+	)
 }
 
 export default MyApp
