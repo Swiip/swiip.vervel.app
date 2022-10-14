@@ -1,7 +1,10 @@
+import NextLink from 'next/link'
 import type { NextPage, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
-import Header from '../components/header'
+import Card from '../components/card'
 import { getHomeData } from '../notion/notion'
+import { ArrowNarrowRightIcon } from '@heroicons/react/outline'
+import Page from '../components/page'
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	name,
@@ -9,6 +12,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	caption,
 	image,
 	posts,
+	content,
 }) => {
 	// console.log('pageProps', { name, title, caption, image })
 
@@ -29,39 +33,63 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	const imageUrl = image?.image.type === 'file' ? image.image.file.url : ''
 
 	return (
-		<div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-			<Header />
-			<main className="flex flex-col gap-16 max-w-2xl mx-auto">
-				<div className="flex flex-row gap-8">
-					<div className="flex flex-col">
-						<h1 className="font-bold text-4xl mb-1 text-black dark:text-white">
-							{nameValue}
-						</h1>
-						<h2 className="text-gray-700 dark:text-gray-200 mb-4">
-							{titleValue}
-						</h2>
-						<p className="text-gray-600 dark:text-gray-400">{captionValue}</p>
-					</div>
-					<div className="w-[176px] relative mb-0 mr-auto">
-						<Image
-							alt={imageAlt}
-							height={176}
-							width={176}
-							src={imageUrl}
-							sizes="30vw"
-							priority
-							className="rounded-3xl"
-						/>
-					</div>
-				</div>
+		<Page className="gap-16">
+			<div className="flex flex-row gap-8">
 				<div className="flex flex-col">
-					<h1 className="font-bold text-4xl mb-1 text-black dark:text-white">
-						Featured Posts
+					<h1 className="text-black dark:text-white font-bold text-4xl mb-1">
+						{nameValue}
 					</h1>
+					<h2 className="text-gray-700 dark:text-gray-200 mb-4">
+						{titleValue}
+					</h2>
+					<p className="text-gray-600 dark:text-gray-400">{captionValue}</p>
 				</div>
-			</main>
-			<footer></footer>
-		</div>
+				<div className="w-[176px] relative mb-0 mr-auto">
+					<Image
+						alt={imageAlt}
+						height={176}
+						width={176}
+						src={imageUrl}
+						sizes="30vw"
+						priority
+						className="rounded-3xl"
+					/>
+				</div>
+			</div>
+			<div className="flex flex-col">
+				<h2 className="font-bold text-4xl mb-6 text-black dark:text-white">
+					Featured Posts
+				</h2>
+				<div className="grid grid-cols-3 gap-8">
+					{posts.map((post, i) => (
+						<Card key={post.id} color={i}>
+							{post.title}
+						</Card>
+					))}
+				</div>
+				<NextLink href="/blog">
+					<a className="flex underline mt-8 text-gray-600 dark:text-gray-400 leading-7 hover:text-gray-800 dark:hover:text-gray-200 transition-all h-6">
+						Read all posts <ArrowNarrowRightIcon className="h-6 w-6 ml-1" />
+					</a>
+				</NextLink>
+			</div>
+			<p className="text-gray-600 dark:text-gray-400">
+				{content?.paragraph.rich_text.map((richText) =>
+					richText.href ? (
+						<a
+							href={richText.href as string}
+							className="underline hover:text-gray-800 dark:hover:text-gray-200 transition-all"
+							target="_blank"
+							rel=" noopener noreferrer"
+						>
+							{richText.plain_text}
+						</a>
+					) : (
+						richText.plain_text
+					)
+				)}
+			</p>
+		</Page>
 	)
 }
 

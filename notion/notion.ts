@@ -6,6 +6,7 @@ import {
 	Heading2BlockObjectResponse,
 	Heading3BlockObjectResponse,
 	ImageBlockObjectResponse,
+	ParagraphBlockObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints'
 
 const NOTION_KEY = 'secret_gZNAR6WBAbPPHeFGemwS3rjgnMMvAZLG9GGLTFfaMhA'
@@ -25,6 +26,8 @@ export const getHomeData = async () => {
 		isFullBlock(block)
 	) as BlockObjectResponse[]
 
+	console.log('coucou', blocks)
+
 	const name = blocks.find((block) => block.type === 'heading_1') as
 		| Heading1BlockObjectResponse
 		| undefined
@@ -37,8 +40,11 @@ export const getHomeData = async () => {
 	const image = blocks.find((block) => block.type === 'image') as
 		| ImageBlockObjectResponse
 		| undefined
+	const content = blocks.find((block) => block.type === 'paragraph') as
+		| ParagraphBlockObjectResponse
+		| undefined
 
-	let posts: string[] = []
+	let posts: { id: string; title: string }[] = []
 
 	const blogPage = blocks.find(
 		(block) =>
@@ -57,8 +63,44 @@ export const getHomeData = async () => {
 		const blogChildren = blogBlocks.filter(
 			(block) => block.type === 'child_page'
 		) as ChildPageBlockObjectResponse[]
-		posts = blogChildren.slice(0, 3).map((blog) => blog.child_page.title)
+
+		posts = blogChildren.slice(0, 3).map((blog) => ({
+			id: blog.id,
+			title: blog.child_page.title,
+		}))
 	}
 
-	return { name, title, caption, image, posts }
+	return { name, title, caption, image, posts, content }
+}
+
+export const getBioData = async (): Promise<{
+	content: BlockObjectResponse[] | undefined
+}> => {
+	const allBlocks = await notion.blocks.children.list({
+		block_id: NOTION_ROOT_ID,
+		page_size: 50,
+	})
+	const blocks = allBlocks.results.filter((block) =>
+		isFullBlock(block)
+	) as BlockObjectResponse[]
+
+	const page = blocks.find(
+		(block) =>
+			block.type === 'child_page' &&
+			block.child_page.title.toLowerCase() === 'bio'
+	)
+
+	if (!page) {
+		return { content: undefined }
+	}
+
+	const allBioBlocks = await notion.blocks.children.list({
+		block_id: page.id,
+		page_size: 50,
+	})
+	const content = allBioBlocks.results.filter((block) =>
+		isFullBlock(block)
+	) as BlockObjectResponse[]
+
+	return { content }
 }
