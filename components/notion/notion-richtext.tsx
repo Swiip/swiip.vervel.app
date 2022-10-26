@@ -6,10 +6,10 @@ import { FC, Fragment } from 'react'
 import cn from 'classnames'
 
 interface Props {
-	items: RichTextItemResponse[]
+	items?: RichTextItemResponse[]
 }
 
-const NotionRichText: FC<Props> = ({ items }) => {
+const NotionRichText: FC<Props> = ({ items = [] }) => {
 	return (
 		<>
 			{items.map((richText, i) => {
@@ -33,7 +33,7 @@ const NotionRichText: FC<Props> = ({ items }) => {
 					)
 				}
 				return (
-					<span key={i} className={cn(className, 'text-undelined')}>
+					<span key={i} className={className}>
 						{richText.plain_text.split('\n').map((text, i) => (
 							<Fragment key={i}>
 								{i > 0 && <br />}

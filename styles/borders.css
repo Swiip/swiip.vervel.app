@@ -1,0 +1,13 @@
+.magic-borders {
+    --total: 3s;
+    background: linear-gradient(45deg, #F17C58, #E94584, #24AADB, #27DBB1, #FFDC18, #FF3706);
+    background-size: 600% 100%;
+    animation: gradient var(--total) linear infinite;
+    animation-direction: alternate;
+    animation-delay: calc(var(--offset, 0) * var(--total) / 3);
+}
+
+@keyframes gradient {
+    0% {background-position: 0%}
+    100% {background-position: 100%}
+}
