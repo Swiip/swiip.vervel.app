@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client'
 
-const NOTION_KEY = 'secret_gZNAR6WBAbPPHeFGemwS3rjgnMMvAZLG9GGLTFfaMhA'
+const NOTION_KEY = process.env.NOTION_KEY
 
-export const NOTION_ROOT_ID = '302e5568d84c4ef6a67812b2d31efcdd'
+export const NOTION_ROOT_ID = process.env.NOTION_ROOT_ID
 
 export const notion = new Client({ auth: NOTION_KEY })
