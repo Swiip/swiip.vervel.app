@@ -1,5 +1,7 @@
+'use client'
+
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import cn from 'classnames'
 import { FC, ReactNode } from 'react'
 
@@ -9,8 +11,8 @@ interface Props {
 }
 
 const NavItem: FC<Props> = ({ href, children }) => {
-	const router = useRouter()
-	const isActive = router.asPath === href
+	const pathname = usePathname()
+	const isActive = pathname === href
 
 	return (
 		<Link

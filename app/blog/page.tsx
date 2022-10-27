@@ -1,15 +1,13 @@
-import type { NextPage, InferGetStaticPropsType } from 'next'
 import NotionBlocks from '../../components/notion/notion-blocks'
 import NotionRichText from '../../components/notion/notion-richtext'
-import Page from '../../components/page'
 import { getBlogData } from '../../data'
 import Link from 'next/link'
 
-const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
-	content,
-}) => {
+const Blog = async () => {
+	const { content } = await getBlogData()
+
 	return (
-		<Page>
+		<>
 			<NotionBlocks blocks={content} />
 			<div>
 				{content
@@ -32,21 +30,8 @@ const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 						)
 					})}
 			</div>
-		</Page>
+		</>
 	)
-}
-
-// This function gets called at build time on server-side.
-// It may be called again, on a serverless function, if
-// revalidation is enabled and a new request comes in
-export async function getStaticProps() {
-	return {
-		props: await getBlogData(),
-		// Next.js will attempt to re-generate the page:
-		// - When a request comes in
-		// - At most once every 10 seconds
-		revalidate: 10, // In seconds
-	}
 }
 
 export default Blog
