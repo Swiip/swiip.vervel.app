@@ -1,7 +1,7 @@
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 import NavItem from './nav-item'
-import { SunIcon, MoonIcon } from '@heroicons/react/outline'
+import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 
 const Header = () => {
 	const [mounted, setMounted] = useState(false)

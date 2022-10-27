@@ -1,4 +1,4 @@
-import NextLink from 'next/link'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 import { FC, ReactNode } from 'react'
@@ -13,18 +13,17 @@ const NavItem: FC<Props> = ({ href, children }) => {
 	const isActive = router.asPath === href
 
 	return (
-		<NextLink href={href}>
-			<a
-				className={cn(
-					isActive
-						? 'font-semibold text-gray-800 dark:text-gray-200'
-						: 'font-normal text-gray-600 dark:text-gray-400',
-					'rounded-lg px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all'
-				)}
-			>
-				<span className="capsize">{children}</span>
-			</a>
-		</NextLink>
+		<Link
+			href={href}
+			className={cn(
+				isActive
+					? 'font-semibold text-gray-800 dark:text-gray-200'
+					: 'font-normal text-gray-600 dark:text-gray-400',
+				'rounded-lg px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all'
+			)}
+		>
+			<span className="capsize">{children}</span>
+		</Link>
 	)
 }
 

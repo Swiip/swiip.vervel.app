@@ -1,22 +1,29 @@
 import cn from 'classnames'
 import {
-	AnchorHTMLAttributes,
+	AllHTMLAttributes,
 	forwardRef,
 	ForwardRefRenderFunction,
+	ReactNode,
 } from 'react'
+import NextLink from 'next/link'
 
-const Link: ForwardRefRenderFunction<
-	HTMLAnchorElement,
-	AnchorHTMLAttributes<HTMLAnchorElement>
-> = ({ className, ...props }, ref) => (
-	<a
+interface Props extends AllHTMLAttributes<HTMLAnchorElement> {
+	children: ReactNode
+	href: string
+}
+
+const Link: ForwardRefRenderFunction<HTMLAnchorElement, Props> = (
+	{ className, ...props },
+	ref
+) => (
+	<NextLink
 		ref={ref}
 		className={cn(
 			'underline text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-all',
 			className
 		)}
 		{...props}
-	></a>
+	/>
 )
 
 export default forwardRef(Link)

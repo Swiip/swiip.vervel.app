@@ -1,9 +1,9 @@
-import NextLink from 'next/link'
+import Link from 'next/link'
 import type { NextPage, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import Card from '../components/card'
 import { getHomeData } from '../data'
-import { ArrowNarrowRightIcon } from '@heroicons/react/outline'
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import Page from '../components/page'
 import NotionRichText from '../components/notion/notion-richtext'
 
@@ -70,11 +70,12 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 						</Card>
 					))}
 				</div>
-				<NextLink href="/blog">
-					<a className="flex underline mt-8 text-gray-600 dark:text-gray-400 leading-7 hover:text-gray-800 dark:hover:text-gray-200 transition-all h-6">
-						Read all posts <ArrowNarrowRightIcon className="h-6 w-6 ml-1" />
-					</a>
-				</NextLink>
+				<Link
+					href="/blog"
+					className="flex underline mt-8 text-gray-600 dark:text-gray-400 leading-7 hover:text-gray-800 dark:hover:text-gray-200 transition-all h-6"
+				>
+					Read all posts <ChevronRightIcon className="h-6 w-6 ml-1" />
+				</Link>
 			</div>
 			<p className="text-gray-600 dark:text-gray-400">
 				<NotionRichText items={content?.paragraph.rich_text} />
