@@ -1,43 +1,30 @@
-import {
-	Heading1BlockObjectResponse,
-	Heading2BlockObjectResponse,
-	Heading3BlockObjectResponse,
-	ImageBlockObjectResponse,
-	ParagraphBlockObjectResponse,
-} from '@notionhq/client/build/src/api-endpoints'
 import { getAllBlocks, getRecursiveAllBlocks } from './notion/blocks'
 import { getPageFromBlocks } from './notion/pages'
-import { PageProps } from './notion/types'
+import { PageBlock } from './notion/types'
+import {
+	fetchBlocks,
+	fetchPagesMetadata,
+	filterBlocksOfType,
+	findBlockOfType,
+	findPage,
+} from './notion/api'
 
 export const getHomeData = async () => {
-	const blocks = await getAllBlocks()
+	const blocks = await fetchBlocks()
+	const name = findBlockOfType(blocks, 'heading_1')
+	const title = findBlockOfType(blocks, 'heading_2')
+	const caption = findBlockOfType(blocks, 'heading_3')
+	const image = findBlockOfType(blocks, 'image')
+	const content = findBlockOfType(blocks, 'paragraph')
 
-	const name = blocks.find((block) => block.type === 'heading_1') as
-		| Heading1BlockObjectResponse
-		| undefined
-	const title = blocks.find((block) => block.type === 'heading_2') as
-		| Heading2BlockObjectResponse
-		| undefined
-	const caption = blocks.find((block) => block.type === 'heading_3') as
-		| Heading3BlockObjectResponse
-		| undefined
-	const image = blocks.find((block) => block.type === 'image') as
-		| ImageBlockObjectResponse
-		| undefined
-	const content = blocks.find((block) => block.type === 'paragraph') as
-		| ParagraphBlockObjectResponse
-		| undefined
+	let posts: PageBlock[] = []
 
-	let posts: PageProps[] = []
-
-	const blogPage = getPageFromBlocks(blocks, 'blog')
+	const blogPage = findPage(blocks, 'blog')
 
 	if (blogPage) {
-		const blogBlocks = await getRecursiveAllBlocks(blogPage.id)
-
-		posts = blogBlocks
-			.filter((block) => block.type === 'child_page')
-			.map((block) => block.pageProps as PageProps)
+		const blogBlocks = await fetchBlocks(blogPage.id, true)
+		posts = filterBlocksOfType(blogBlocks, 'child_page').slice(0, 3)
+		posts = await fetchPagesMetadata(posts)
 	}
 
 	return { name, title, caption, image, posts, content }

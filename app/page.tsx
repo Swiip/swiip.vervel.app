@@ -8,30 +8,26 @@ import NotionRichText from '../components/notion/notion-richtext'
 const Home = async () => {
 	const { name, title, caption, image, posts, content } = await getHomeData()
 
-	const imageAlt =
-		image?.image.caption.map((richText) => richText.plain_text).join('') || ''
-	const imageUrl = image?.image.type === 'file' ? image.image.file.url : ''
-
 	return (
 		<div className="flex flex-col gap-16">
 			<div className="flex flex-row gap-8">
 				<div className="flex flex-col">
 					<h1 className="text-black dark:text-white font-bold text-5xl mb-1">
-						<NotionRichText items={name?.heading_1.rich_text} />
+						<NotionRichText items={name?.text} />
 					</h1>
 					<h2 className="text-gray-700 dark:text-gray-200 mb-4">
-						<NotionRichText items={title?.heading_2.rich_text} />
+						<NotionRichText items={title?.text} />
 					</h2>
 					<p className="text-gray-600 dark:text-gray-400">
-						<NotionRichText items={caption?.heading_3.rich_text} />
+						<NotionRichText items={caption?.text} />
 					</p>
 				</div>
 				<div className="w-[176px] relative mb-0 mr-auto">
 					<Image
-						alt={imageAlt}
+						alt={image?.alt || ''}
 						height={176}
 						width={176}
-						src={imageUrl}
+						src={image?.url || ''}
 						sizes="30vw"
 						priority
 						className="rounded-3xl"
@@ -44,8 +40,19 @@ const Home = async () => {
 				</h2>
 				<div className="grid grid-cols-3 gap-8">
 					{posts.map((post, i) => (
-						<Card key={post.slug} href={`/blog/${post.slug}`} color={i}>
-							{post.title}
+						<Card
+							key={post.slug}
+							href={`/blog/${post.slug}`}
+							color={i}
+							className="flex flex-col gap-4"
+						>
+							<h3 className="text-2xl">{post.title}</h3>
+							<p className="text-gray-600 dark:text-gray-400">
+								<NotionRichText items={post?.description} />
+							</p>
+							{post.lang?.flag && (
+								<div className="self-end">{post.lang.flag}</div>
+							)}
 						</Card>
 					))}
 				</div>
@@ -57,7 +64,7 @@ const Home = async () => {
 				</Link>
 			</div>
 			<p className="text-gray-600 dark:text-gray-400">
-				<NotionRichText items={content?.paragraph.rich_text} />
+				<NotionRichText items={content?.text} />
 			</p>
 		</div>
 	)
