@@ -1,7 +1,4 @@
-import {
-	Heading1BlockObjectResponse,
-	RichTextItemResponse,
-} from '@notionhq/client/build/src/api-endpoints'
+import { RichTextItemResponse } from '@notionhq/client/build/src/api-endpoints'
 import { FC, Fragment } from 'react'
 import cn from 'classnames'
 

@@ -1,21 +1,4 @@
-import {
-	BlockObjectResponse,
-	CommentObjectResponse,
-	RichTextItemResponse,
-} from '@notionhq/client/build/src/api-endpoints'
-
-export type Block = BlockObjectResponse & {
-	children?: Block[]
-	comments?: CommentObjectResponse[]
-	pageProps?: PageProps
-}
-
-export type PageProps = {
-	title: string
-	slug: string
-	lang?: { key: 'fr' | 'en'; flag: '🇫🇷' | '🇬🇧' }
-	description?: RichTextItemResponse[]
-}
+import { RichTextItemResponse } from '@notionhq/client/build/src/api-endpoints'
 
 export type RichText = RichTextItemResponse[]
 
@@ -25,19 +8,24 @@ export type BlockType =
 	| 'heading_3'
 	| 'paragraph'
 	| 'image'
+	| 'bulleted_list_item'
+	| 'column_list'
+	| 'column'
 	| 'child_page'
 
 export type AbstractBlock = {
 	id: string
 	type: BlockType
-	children?: NewBlock[]
+	children?: Block[]
 }
 
 export type TextBlock = AbstractBlock & { text: RichText }
+export type HeadingBlock = TextBlock & { toggleable: boolean }
 
-export type Heading1Block = TextBlock & { type: 'heading_1' }
-export type Heading2Block = TextBlock & { type: 'heading_2' }
-export type Heading3Block = TextBlock & { type: 'heading_3' }
+export type Heading1Block = HeadingBlock & { type: 'heading_1' }
+export type Heading2Block = HeadingBlock & { type: 'heading_2' }
+export type Heading3Block = HeadingBlock & { type: 'heading_3' }
+
 export type ParagraphBlock = TextBlock & { type: 'paragraph' }
 
 export type ImageBlock = AbstractBlock & {
@@ -49,6 +37,19 @@ export type ImageBlock = AbstractBlock & {
 	align?: string
 }
 
+export type LiBlock = TextBlock & {
+	type: 'bulleted_list_item'
+}
+
+export type ColsBlock = AbstractBlock & {
+	type: 'column_list'
+	children?: ColBlock[]
+}
+
+export type ColBlock = AbstractBlock & {
+	type: 'column'
+}
+
 export type PageBlock = AbstractBlock & {
 	type: 'child_page'
 	title: string
@@ -57,19 +58,13 @@ export type PageBlock = AbstractBlock & {
 	description?: RichText
 }
 
-export type NewBlock =
+export type Block =
 	| Heading1Block
 	| Heading2Block
 	| Heading3Block
 	| ParagraphBlock
 	| ImageBlock
+	| LiBlock
+	| ColsBlock
+	| ColBlock
 	| PageBlock
-
-const test = (toto: NewBlock) => {
-	if (toto.type === 'paragraph') {
-		toto.text // works
-	}
-	if (toto.type === 'child_page') {
-		toto.slug // works
-	}
-}

@@ -1,5 +1,3 @@
-import { getAllBlocks, getRecursiveAllBlocks } from './notion/blocks'
-import { getPageFromBlocks } from './notion/pages'
 import { PageBlock } from './notion/types'
 import {
 	fetchBlocks,
@@ -31,27 +29,49 @@ export const getHomeData = async () => {
 }
 
 export const getBioData = async () => {
-	const rootBlocks = await getAllBlocks()
-	const bioPage = getPageFromBlocks(rootBlocks, 'bio')
+	const rootBlocks = await fetchBlocks()
+	const bioPage = findPage(rootBlocks, 'bio')
 
 	if (!bioPage) {
-		return { content: undefined }
+		return {}
 	}
 
-	const content = await getRecursiveAllBlocks(bioPage.id)
+	const content = await fetchBlocks(bioPage.id, true)
 
 	return { content }
 }
 
 export const getBlogData = async () => {
-	const rootBlocks = await getAllBlocks()
-	const blogPage = getPageFromBlocks(rootBlocks, 'blog')
+	const rootBlocks = await fetchBlocks()
+	const blogPage = findPage(rootBlocks, 'blog')
 
 	if (!blogPage) {
-		return { content: undefined }
+		return {}
 	}
 
-	const blocks = await getRecursiveAllBlocks(blogPage.id)
+	const content = await fetchBlocks(blogPage.id, true)
+	let posts = filterBlocksOfType(content, 'child_page')
+	posts = await fetchPagesMetadata(posts)
 
-	return { content: blocks }
+	return { content, posts }
+}
+
+export const getPostData = async (slug: string) => {
+	console.log('slug', slug)
+
+	const rootBlocks = await fetchBlocks()
+	const blogPage = findPage(rootBlocks, 'blog')
+
+	console.log('blogPage', blogPage)
+
+	if (!blogPage) {
+		return {}
+	}
+
+	const blogBlocks = await fetchBlocks(blogPage.id)
+	const post = findPage(blogBlocks, slug)
+
+	const content = await fetchBlocks(post?.id)
+
+	return { post, content }
 }

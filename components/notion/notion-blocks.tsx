@@ -1,9 +1,9 @@
-import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import { FC } from 'react'
+import { Block } from '../../data/notion/types'
 import NotionBlock from './notion-block'
 
 interface Props {
-	blocks?: BlockObjectResponse[]
+	blocks?: Block[]
 }
 
 const NotionBlocks: FC<Props> = ({ blocks }) => {

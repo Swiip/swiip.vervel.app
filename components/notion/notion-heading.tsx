@@ -1,17 +1,17 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import {
-	Heading1BlockObjectResponse,
-	Heading2BlockObjectResponse,
-	Heading3BlockObjectResponse,
-} from '@notionhq/client/build/src/api-endpoints'
 import { FC, useState } from 'react'
 import NotionRichText from './notion-richtext'
 import cn from 'classnames'
 import { Collapse } from 'react-collapse'
 import NotionBlocks from './notion-blocks'
-import { Block } from '../../data/notion/types'
+import {
+	Block,
+	Heading1Block,
+	Heading2Block,
+	Heading3Block,
+} from '../../data/notion/types'
 
 const headings: {
 	[key: string]: { Tag: 'h1' | 'h2' | 'h3'; className: string }
@@ -31,43 +31,34 @@ const headings: {
 }
 
 interface Props {
-	block:
-		| Heading1BlockObjectResponse
-		| Heading2BlockObjectResponse
-		| Heading3BlockObjectResponse
+	block: Heading1Block | Heading2Block | Heading3Block
 }
 
 const NotionHeading: FC<Props> = ({ block }) => {
 	const [collapsed, setCollapsed] = useState(true)
 
 	const { Tag, className } = headings[block.type]
-	const data =
-		block.type === 'heading_1'
-			? block.heading_1
-			: block.type === 'heading_2'
-			? block.heading_2
-			: block.heading_3
-	const isToggleable = (data as unknown as { is_toggleable: boolean })
-		.is_toggleable
-	const children = (block as Block).children
 
 	const handleClick = () => setCollapsed(!collapsed)
 
 	return (
 		<>
-			<a onClick={handleClick} className={cn(isToggleable && 'cursor-pointer')}>
+			<a
+				onClick={handleClick}
+				className={cn(block.toggleable && 'cursor-pointer')}
+			>
 				<Tag className={cn('flex items-center', className)}>
-					{isToggleable && (
+					{block.toggleable && (
 						<ChevronRightIcon
 							className={cn('inline-block w-8 h-8', !collapsed && 'rotate-90')}
 						/>
 					)}
-					<NotionRichText items={data.rich_text} />
+					<NotionRichText items={block.text} />
 				</Tag>
 			</a>
-			{isToggleable && (
+			{block.toggleable && (
 				<Collapse isOpened={!collapsed}>
-					<NotionBlocks blocks={children} />
+					<NotionBlocks blocks={block.children} />
 				</Collapse>
 			)}
 		</>

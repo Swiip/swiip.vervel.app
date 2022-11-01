@@ -1,5 +1,5 @@
-import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import { FC } from 'react'
+import { Block } from '../../data/notion/types'
 import NotionCols from './notion-cols'
 import NotionHeading from './notion-heading'
 import NotionImg from './notion-img'
@@ -7,7 +7,7 @@ import NotionLi from './notion-li'
 import NotionP from './notion-p'
 
 interface Props {
-	block: BlockObjectResponse
+	block: Block
 }
 
 const NotionBlock: FC<Props> = ({ block }) => {
