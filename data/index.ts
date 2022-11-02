@@ -57,12 +57,8 @@ export const getBlogData = async () => {
 }
 
 export const getPostData = async (slug: string) => {
-	console.log('slug', slug)
-
 	const rootBlocks = await fetchBlocks()
 	const blogPage = findPage(rootBlocks, 'blog')
-
-	console.log('blogPage', blogPage)
 
 	if (!blogPage) {
 		return {}

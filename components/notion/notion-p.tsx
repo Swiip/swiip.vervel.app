@@ -8,7 +8,7 @@ interface Props {
 
 const NotionP: FC<Props> = ({ block }) => {
 	return (
-		<p className="text-gray-700 dark:text-gray-200 mt-1 mb-1">
+		<p className="text-gray-700 dark:text-gray-200 mt-2 mb-2">
 			<NotionRichText items={block.text} />
 		</p>
 	)

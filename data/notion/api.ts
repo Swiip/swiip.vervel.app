@@ -58,7 +58,7 @@ export const findBlockOfType = <Type extends BlockType>(
 
 export const findPage = (blocks: Block[], slug: string) => {
 	return blocks.find(
-		(block) =>
+		(block): block is PageBlock =>
 			block.type === 'child_page' && slugify(block.title.toLowerCase()) === slug
 	)
 }
@@ -71,6 +71,8 @@ export const fetchPageMetadata = async (block: PageBlock) => {
 
 	const result: PageBlock = { ...block }
 
+	const dateRegexp = /\d{2}\/\d{2}\/\d{4}/
+
 	comments.results.forEach((comment) => {
 		if (['🇫🇷', '🇬🇧'].includes(comment.rich_text[0].plain_text)) {
 			if (comment.rich_text[0].plain_text === '🇫🇷') {
@@ -79,6 +81,8 @@ export const fetchPageMetadata = async (block: PageBlock) => {
 			if (comment.rich_text[0].plain_text === '🇬🇧') {
 				result.lang = { key: 'en', flag: '🇬🇧' }
 			}
+		} else if (dateRegexp.test(comment.rich_text[0].plain_text)) {
+			result.date = comment.rich_text[0].plain_text
 		} else {
 			result.description = comment.rich_text
 		}

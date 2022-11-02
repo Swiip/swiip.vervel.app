@@ -18,15 +18,15 @@ const headings: {
 } = {
 	heading_1: {
 		Tag: 'h1',
-		className: 'text-black dark:text-white font-bold text-5xl mt-4 mb-1',
+		className: 'text-black dark:text-white font-bold text-5xl mt-8 mb-4',
 	},
 	heading_2: {
 		Tag: 'h2',
-		className: 'text-black dark:text-white font-bold text-4xl mt-4 mb-1',
+		className: 'text-black dark:text-white font-bold text-4xl mt-8 mb-4',
 	},
 	heading_3: {
 		Tag: 'h3',
-		className: 'text-black dark:text-white font-bold text-3xl mt-4 mb-1',
+		className: 'text-black dark:text-white font-bold text-3xl mt-8 mb-4',
 	},
 }
 

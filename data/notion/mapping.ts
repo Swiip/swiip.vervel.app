@@ -49,6 +49,6 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 	}
 	if (type === 'child_page') {
 		const { title } = block.child_page
-		return { id, type, title, slug: slugify(title) }
+		return { id, type, title, slug: slugify(title).toLowerCase() }
 	}
 }

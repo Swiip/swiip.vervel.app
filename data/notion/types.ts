@@ -55,6 +55,7 @@ export type PageBlock = AbstractBlock & {
 	title: string
 	slug: string
 	lang?: { key: 'fr' | 'en'; flag: '🇫🇷' | '🇬🇧' }
+	date?: string
 	description?: RichText
 }
 
