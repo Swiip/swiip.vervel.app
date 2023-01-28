@@ -8,10 +8,10 @@ interface Props {
 
 const NotionImg: FC<Props> = ({ block }) => {
 	const alignClass = {
-		left: 'text-left',
-		center: 'text-center',
-		right: 'text-right',
-	}[block.align || '']
+		left: 'flex justify-start',
+		center: 'flex justify-center',
+		right: 'flex justify-end',
+	}[block.align || 'center']
 
 	return (
 		<p className={alignClass}>

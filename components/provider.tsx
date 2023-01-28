@@ -1,6 +1,6 @@
 'use client'
 
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider } from '@wits/next-themes'
 import { ReactNode } from 'react'
 
 type Props = {

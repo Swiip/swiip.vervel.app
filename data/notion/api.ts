@@ -2,7 +2,7 @@ import { Client, isFullBlock } from '@notionhq/client'
 import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import slugify from 'slugify'
 import { parseBlock } from './mapping'
-import { BlockType, Block, PageBlock } from './types'
+import { BlockType, Block, PageBlock, WithChildrenBlock } from './types'
 
 const NOTION_KEY = process.env.NOTION_KEY
 
@@ -29,8 +29,11 @@ export const fetchBlocks = async (
 		const newBlock = parseBlock(block)
 		if (newBlock) {
 			newBlocks.push(newBlock)
-			if (recursive && block.has_children && block.type !== 'child_page') {
-				newBlock.children = await fetchBlocks(newBlock?.id, true)
+			if (recursive && 'hasChildren' in newBlock && newBlock.hasChildren) {
+				;(newBlock as WithChildrenBlock).children = await fetchBlocks(
+					newBlock?.id,
+					true
+				)
 			}
 		}
 	}

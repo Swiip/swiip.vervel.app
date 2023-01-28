@@ -22,6 +22,11 @@ export type AbstractBlock = {
 export type TextBlock = AbstractBlock & { text: RichText }
 export type HeadingBlock = TextBlock & { toggleable: boolean }
 
+export type WithChildrenBlock = AbstractBlock & {
+	children?: Block[]
+	hasChildren: boolean
+}
+
 export type Heading1Block = HeadingBlock & { type: 'heading_1' }
 export type Heading2Block = HeadingBlock & { type: 'heading_2' }
 export type Heading3Block = HeadingBlock & { type: 'heading_3' }
@@ -41,12 +46,12 @@ export type LiBlock = TextBlock & {
 	type: 'bulleted_list_item'
 }
 
-export type ColsBlock = AbstractBlock & {
+export type ColsBlock = WithChildrenBlock & {
 	type: 'column_list'
 	children?: ColBlock[]
 }
 
-export type ColBlock = AbstractBlock & {
+export type ColBlock = WithChildrenBlock & {
 	type: 'column'
 }
 

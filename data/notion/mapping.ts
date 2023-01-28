@@ -51,4 +51,10 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 		const { title } = block.child_page
 		return { id, type, title, slug: slugify(title).toLowerCase() }
 	}
+	if (type === 'column_list') {
+		return { id, type, hasChildren: block.has_children }
+	}
+	if (type === 'column') {
+		return { id, type, hasChildren: block.has_children }
+	}
 }
