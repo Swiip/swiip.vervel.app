@@ -1,11 +1,12 @@
-import { PageBlock } from './notion/types'
+import { Content } from './notion/types'
 import {
 	fetchBlocks,
-	fetchPagesMetadata,
 	filterBlocksOfType,
 	findBlockOfType,
+	findDatabase,
 	findPage,
-} from './notion/api'
+} from './notion/blocks'
+import { fetchDatabase } from './notion/databases'
 
 export const getHomeData = async () => {
 	const blocks = await fetchBlocks()
@@ -13,19 +14,21 @@ export const getHomeData = async () => {
 	const title = findBlockOfType(blocks, 'heading_2')
 	const caption = findBlockOfType(blocks, 'heading_3')
 	const image = findBlockOfType(blocks, 'image')
-	const content = findBlockOfType(blocks, 'paragraph')
+	const content = filterBlocksOfType(blocks, 'paragraph')
 
-	let posts: PageBlock[] = []
+	const contentDatabase = findDatabase(blocks, 'content')
 
-	const blogPage = findPage(blocks, 'blog')
+	let featured: Content[] = []
 
-	if (blogPage) {
-		const blogBlocks = await fetchBlocks(blogPage.id, true)
-		posts = filterBlocksOfType(blogBlocks, 'child_page').slice(0, 3)
-		posts = await fetchPagesMetadata(posts)
+	if (contentDatabase) {
+		featured = await fetchDatabase(
+			contentDatabase.id,
+			[{ property: 'Date', direction: 'descending' }],
+			3
+		)
 	}
 
-	return { name, title, caption, image, posts, content }
+	return { name, title, caption, image, content, featured }
 }
 
 export const getBioData = async () => {
@@ -41,33 +44,17 @@ export const getBioData = async () => {
 	return { content }
 }
 
-export const getBlogData = async () => {
+export const getContentData = async () => {
 	const rootBlocks = await fetchBlocks()
-	const blogPage = findPage(rootBlocks, 'blog')
+	const database = findDatabase(rootBlocks, 'content')
 
-	if (!blogPage) {
-		return {}
+	if (!database) {
+		return []
 	}
 
-	const content = await fetchBlocks(blogPage.id, true)
-	let posts = filterBlocksOfType(content, 'child_page')
-	posts = await fetchPagesMetadata(posts)
+	const contents = await fetchDatabase(database.id, [
+		{ property: 'Date', direction: 'descending' },
+	])
 
-	return { content, posts }
-}
-
-export const getPostData = async (slug: string) => {
-	const rootBlocks = await fetchBlocks()
-	const blogPage = findPage(rootBlocks, 'blog')
-
-	if (!blogPage) {
-		return {}
-	}
-
-	const blogBlocks = await fetchBlocks(blogPage.id)
-	const post = findPage(blogBlocks, slug)
-
-	const content = await fetchBlocks(post?.id)
-
-	return { post, content }
+	return contents
 }

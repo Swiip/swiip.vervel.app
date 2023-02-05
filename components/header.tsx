@@ -7,8 +7,7 @@ const Header = () => {
 			<nav className="flex flex-row gap-4">
 				<NavItem href="/">Home</NavItem>
 				<NavItem href="/bio">Bio</NavItem>
-				<NavItem href="/blog">Blog</NavItem>
-				<NavItem href="/conf">Conferences</NavItem>
+				<NavItem href="/content">Content</NavItem>
 			</nav>
 			<DarkModeToggle />
 		</header>

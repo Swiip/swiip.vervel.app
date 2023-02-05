@@ -6,7 +6,7 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import NotionRichText from '../components/notion/notion-richtext'
 
 const Home = async () => {
-	const { name, title, caption, image, posts, content } = await getHomeData()
+	const { name, title, caption, image, content, featured } = await getHomeData()
 
 	return (
 		<div className="flex flex-col gap-16">
@@ -36,23 +36,25 @@ const Home = async () => {
 			</div>
 			<div className="flex flex-col">
 				<h2 className="font-bold text-4xl mb-6 text-black dark:text-white">
-					Featured Posts
+					Featured contents
 				</h2>
 				<div className="grid grid-cols-3 gap-8">
-					{posts.map((post, i) => (
+					{featured.map((content, i) => (
 						<Card
-							key={post.slug}
-							href={`/blog/${post.slug}`}
+							key={content.id}
+							href={content.url}
 							color={i}
 							className="flex flex-col gap-4"
 						>
-							<h3 className="text-2xl">{post.title}</h3>
+							<h3 className="text-2xl flex-1">
+								<NotionRichText items={content.name} />
+							</h3>
 							<p className="text-gray-600 dark:text-gray-400">
-								<NotionRichText items={post?.description} />
+								{content.type === 'post' ? 'Blog post' : 'Conference'}
 							</p>
-							{post.lang?.flag && (
-								<div className="self-end">{post.lang.flag}</div>
-							)}
+							<div className="self-end">
+								{content.lang === 'EN' ? '🇬🇧' : '🇫🇷'}
+							</div>
 						</Card>
 					))}
 				</div>
@@ -60,12 +62,14 @@ const Home = async () => {
 					href="/blog"
 					className="flex underline mt-8 text-gray-600 dark:text-gray-400 leading-7 hover:text-gray-800 dark:hover:text-gray-200 transition-all h-6"
 				>
-					Read all posts <ChevronRightIcon className="h-6 w-6 ml-1" />
+					View all contents <ChevronRightIcon className="h-6 w-6 ml-1" />
 				</Link>
 			</div>
-			<p className="text-gray-600 dark:text-gray-400">
-				<NotionRichText items={content?.text} />
-			</p>
+			{content.map((paragraph) => (
+				<p key={paragraph.id} className="text-gray-600 dark:text-gray-400">
+					<NotionRichText items={paragraph?.text} />
+				</p>
+			))}
 		</div>
 	)
 }

@@ -1,6 +1,9 @@
-import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
+import {
+	BlockObjectResponse,
+	PageObjectResponse,
+} from '@notionhq/client/build/src/api-endpoints'
 import slugify from 'slugify'
-import { Block } from './types'
+import { Block, Content } from './types'
 
 export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 	const { id, type } = block
@@ -10,6 +13,7 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 			type,
 			text: block.heading_1.rich_text,
 			toggleable: (block.heading_1 as any).is_toggleable,
+			hasChildren: block.has_children,
 		}
 	}
 	if (type === 'heading_2') {
@@ -18,6 +22,7 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 			type,
 			text: block.heading_2.rich_text,
 			toggleable: (block.heading_2 as any).is_toggleable,
+			hasChildren: block.has_children,
 		}
 	}
 	if (type === 'heading_3') {
@@ -26,6 +31,7 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 			type,
 			text: block.heading_3.rich_text,
 			toggleable: (block.heading_3 as any).is_toggleable,
+			hasChildren: block.has_children,
 		}
 	}
 	if (type === 'paragraph') {
@@ -42,7 +48,9 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 		const width = Number(searchParams.get('height')) || 100
 		const height = Number(searchParams.get('width')) || 100
 		const align = searchParams.get('align') || undefined
-		return { id, type, url, alt, width, height, align }
+		const imageType =
+			(searchParams.get('type') as 'light' | 'dark' | undefined) || undefined
+		return { id, type, url, alt, width, height, align, imageType }
 	}
 	if (type === 'bulleted_list_item') {
 		return { id, type, text: block.bulleted_list_item.rich_text }
@@ -57,4 +65,40 @@ export const parseBlock = (block: BlockObjectResponse): Block | undefined => {
 	if (type === 'column') {
 		return { id, type, hasChildren: block.has_children }
 	}
+	if (type === 'child_database') {
+		return { id, type, title: block.child_database.title }
+	}
+}
+
+export const parseContent = (
+	response: PageObjectResponse
+): Content | undefined => {
+	const { properties } = response
+	const type =
+		properties.Type.type === 'select' &&
+		properties.Type.select?.name?.toLowerCase()
+	const name = properties.Name.type === 'title' && properties.Name.title
+	const url = properties.URL.type === 'url' && properties.URL.url
+	const date = properties.Date.type === 'date' && properties.Date.date?.start
+	const lang = properties.Lang.type === 'select' && properties.Lang.select?.name
+
+	if (
+		(type === 'post' || type === 'conference') &&
+		name &&
+		url &&
+		date &&
+		(lang === 'EN' || lang === 'FR')
+	) {
+		const content: Content = {
+			id: response.id,
+			type,
+			name,
+			url,
+			date: new Date(date),
+			lang,
+		}
+		return content
+	}
+
+	return undefined
 }

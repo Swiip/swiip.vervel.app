@@ -12,20 +12,22 @@ export type BlockType =
 	| 'column_list'
 	| 'column'
 	| 'child_page'
+	| 'child_database'
 
 export type AbstractBlock = {
 	id: string
 	type: BlockType
-	children?: Block[]
 }
 
 export type TextBlock = AbstractBlock & { text: RichText }
-export type HeadingBlock = TextBlock & { toggleable: boolean }
 
 export type WithChildrenBlock = AbstractBlock & {
 	children?: Block[]
 	hasChildren: boolean
 }
+
+export type HeadingBlock = TextBlock &
+	WithChildrenBlock & { toggleable: boolean }
 
 export type Heading1Block = HeadingBlock & { type: 'heading_1' }
 export type Heading2Block = HeadingBlock & { type: 'heading_2' }
@@ -40,13 +42,14 @@ export type ImageBlock = AbstractBlock & {
 	width: number
 	height: number
 	align?: string
+	imageType?: 'light' | 'dark'
 }
 
 export type LiBlock = TextBlock & {
 	type: 'bulleted_list_item'
 }
 
-export type ColsBlock = WithChildrenBlock & {
+export type ColsBlock = Omit<WithChildrenBlock, 'children'> & {
 	type: 'column_list'
 	children?: ColBlock[]
 }
@@ -64,6 +67,11 @@ export type PageBlock = AbstractBlock & {
 	description?: RichText
 }
 
+export type DatabaseBlock = AbstractBlock & {
+	type: 'child_database'
+	title: string
+}
+
 export type Block =
 	| Heading1Block
 	| Heading2Block
@@ -74,3 +82,18 @@ export type Block =
 	| ColsBlock
 	| ColBlock
 	| PageBlock
+	| DatabaseBlock
+
+export type Sort = {
+	property: string
+	direction: 'ascending' | 'descending'
+}
+
+export type Content = {
+	id: string
+	type: 'post' | 'conference'
+	name: RichText
+	date: Date
+	lang: 'EN' | 'FR'
+	url: string
+}

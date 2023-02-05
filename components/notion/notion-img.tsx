@@ -1,6 +1,9 @@
+'use-client'
+
 import { FC } from 'react'
 import Image from 'next/image'
 import { ImageBlock } from '../../data/notion/types'
+import cn from 'classnames'
 
 interface Props {
 	block: ImageBlock
@@ -20,6 +23,11 @@ const NotionImg: FC<Props> = ({ block }) => {
 				alt={block.alt || ''}
 				width={block.width}
 				height={block.height}
+				className={cn(
+					block.imageType === 'light' && 'inline-block dark:hidden',
+					block.imageType === 'dark' && 'hidden dark:inline-block'
+				)}
+				priority={false}
 			/>
 		</p>
 	)

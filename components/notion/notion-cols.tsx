@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { FC } from 'react'
 import { ColsBlock } from '../../data/notion/types'
 import NotionBlocks from './notion-blocks'
@@ -15,8 +16,8 @@ const NotionCols: FC<Props> = ({ block }) => {
 
 	return (
 		<div className="flex flex-row gap-4">
-			{colBlocks.map((block) => (
-				<div key={block.id} className="flex-1">
+			{colBlocks.map((block, index) => (
+				<div key={block.id} className={cn(index === 0 ? 'flex-1' : 'mt-8')}>
 					<NotionBlocks blocks={block.children} />
 				</div>
 			))}

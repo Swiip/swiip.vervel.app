@@ -8,8 +8,7 @@ const Footer = () => {
 				<div className="flex flex-col gap-4">
 					<Link href="/">Home</Link>
 					<Link href="/bio">Bio</Link>
-					<Link href="/blog">Blog</Link>
-					<Link href="/conf">Conferences</Link>
+					<Link href="/content">Content</Link>
 				</div>
 				<div className="flex flex-col gap-4 items-end">
 					<Link
